@@ -1,7 +1,7 @@
 import sys
 
 def solution(N, nums):
-    maxHeap = [-1 for _ in range(N + 1)]
+    maxHeap = [-1 for _ in range(2 * N + 1)]
     count = 0
 
     for n in nums:
@@ -15,7 +15,7 @@ def solution(N, nums):
 
                 idx = 1
                 while maxHeap[idx] < maxHeap[idx * 2] or maxHeap[idx] < maxHeap[idx * 2 + 1]:
-                    if maxHeap[idx] < maxHeap[idx * 2]:
+                    if maxHeap[idx * 2 + 1] < maxHeap[idx * 2]:
                         maxHeap[idx], maxHeap[idx * 2] = maxHeap[idx * 2], maxHeap[idx]
                         idx *= 2
                     else :
