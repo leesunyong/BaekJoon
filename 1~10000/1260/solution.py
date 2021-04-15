@@ -4,7 +4,7 @@ def dfs(N, edge, V):
     visited = [False for _ in range(N + 1)]
     visited[V] = True
     stack = [V]
-    order = []
+    order = [V]
     while len(stack):
         current = stack[-1]
 
@@ -12,20 +12,20 @@ def dfs(N, edge, V):
         for e in edge:
             if e[0] == current and not visited[e[1]]:
                 stack.append(e[1])
+                order.append(stack[-1])
                 visited[e[1]] = True
                 check = True
                 break
             elif e[1] == current and not visited[e[0]]:
                 stack.append(e[0])
+                order.append(stack[-1])
                 visited[e[0]] = True
                 check = True
                 break
 
         if not check:
-            order.append(stack[-1])
             del stack[-1]
 
-    order.reverse()
     return order
 
 def bfs(N, edge, V):
@@ -61,7 +61,8 @@ if __name__ == '__main__':
     edge = []
     for _ in range(M):
         edge.append([int(n) for n in sys.stdin.readline().split(' ')])
-        if edge[-1][0] > edge[-1][1]: edge[-1][0], edge[-1][1] = edge[-1][1], edge[-1][0]
+        if edge[-1][0] > edge[-1][1]:
+            edge[-1][0], edge[-1][1] = edge[-1][1], edge[-1][0]
 
     edge.sort(key=lambda e : (e[0], e[1]))
     solution(N, edge, V)
