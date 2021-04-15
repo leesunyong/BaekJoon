@@ -1,36 +1,27 @@
 import sys
+from collections import deque
+
+def devide(start, N, paper):
+
+    mark =  paper[start[0]][start[1]]
+    if N == 1:        
+        if mark == -1: return 1, 0, 0
+        elif mark == 0: return 0, 1, 0
+        else : return 0, 0, 1
+
+    minusOneCnt, zeroCnt, plusOneCnt = 0, 0, 0
+    for k in range(3):
+        for l in range(3):
+            mOne, zero, pOne = devide((start[0] + k * (N // 3), start[1] + l * (N // 3)), N // 3, paper)
+            minusOneCnt += mOne; zeroCnt += zero; plusOneCnt += pOne
+
+    if minusOneCnt == 9 and zeroCnt == 0 and plusOneCnt == 0 : return 1, 0, 0
+    elif minusOneCnt == 0 and zeroCnt == 9 and plusOneCnt == 0: return 0, 1, 0
+    elif minusOneCnt == 0 and zeroCnt == 0 and plusOneCnt == 9: return 0, 0, 1
+    else : return minusOneCnt, zeroCnt, plusOneCnt
 
 def solution(N, paper):
-    queue = [[N, (0, 0)]]
-    minusOneCnt, zeroCnt, plusOneCnt = 0, 0, 0
-
-    while len(queue):
-        p = queue[0]; del queue[0]
-
-        length, start = p
-        end = (start[0] + length - 1, start[1] + length - 1)
-        mark = paper[start[0]][start[1]]
-
-        devided = False
-        for i in range(start[0], end[0] + 1):
-            for j in range(start[1], end[1] + 1):
-                if mark != paper[i][j]:
-                    subLength = length // 3
-                    for k in range(3):
-                        for l in range(3):
-                            queue.append([subLength, (start[0] + k * subLength, start[0] + l * subLength)])
-                    
-                    devided = True
-                    break
-            
-            if devided: break
-        
-        if not devided:
-            if mark == -1: minusOneCnt += 1
-            elif mark == 0: zeroCnt += 1
-            else : plusOneCnt += 1
-    
-    return minusOneCnt, zeroCnt, plusOneCnt
+    return devide((0, 0), N, paper)
 
 if __name__=='__main__':
     N = int(sys.stdin.readline())
