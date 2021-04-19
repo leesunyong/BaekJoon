@@ -7,16 +7,20 @@ def solution(A, B):
     queue = deque(); queue.append(A)
     prevNum[A] = A
     digit = [1] * 10 + [10] * 90 + [100] * 900 + [1000] * 9000
+    nextCom = ['D', 'S', 'L', 'R']
+
     while queue:
         current = queue.popleft()
 
-        nextNum = [(current * 2) % 10000, (current + 9999) % 10000]
-        nextCom = ['D', 'S', 'L', 'R']
+        nextNum = [current * 2, current - 1]
+        
         if current > 9:
             d = digit[current]
-            nextNum.extend([(current % d) * 10 + current // d, (current % 10) * d + current // 10])
+            nextNum.extend([(current % 1000) * 10 + current // 1000, (current % 10) * 1000 + current // 10])
         
         for i, n in enumerate(nextNum):
+            if n > 9999: n -= 10000
+            elif n == -1: n = 9999
             if prevNum[n] == -1:
                 prevNum[n], prevCom[n] = current, nextCom[i]
                 if n == B: 
@@ -27,7 +31,6 @@ def solution(A, B):
                     
                     return answer
                 queue.append(n)
-
 
 if __name__ == '__main__':
     T = int(sys.stdin.readline())

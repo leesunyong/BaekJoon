@@ -1,13 +1,14 @@
 import sys
 
 def solution(N, meeting):
-    meeting = sorted(meeting, key=lambda m: (m[0], m[1]), reverse=True)
-    cnt = [0 for _ in range(N)]
-    cnt[0] = 1
+    meeting = sorted(meeting, key=lambda m: (m[1], m[0]))
+    cnt, current = 0, 0
 
+    for m in meeting:
+        if m[0] >= current:
+            cnt += 1; current = m[1]
     
-    print(meeting)
-
+    return cnt
 
 if __name__ == '__main__':
     N = int(sys.stdin.readline())
