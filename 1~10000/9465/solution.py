@@ -1,17 +1,23 @@
 import sys
 
-def solution(n, nums, idx):
-    if n == 1:
-        if nums[0][0] > nums[1][0]: return nums[0][0]
-        else : return nums[1][0]
+read = sys.stdin.readline
 
-    if idx == -1:
-        
+def solution(n, sticker):
+    score = [[0] * n for _ in range(2)]
+    score[0][0] = sticker[0][0]; score[1][0] = sticker[1][0]
+    score[0][1] = sticker[0][1] + sticker[1][0]
+    score[1][1] = sticker[1][1] + sticker[0][0]
+
+    for i in range(2, n):
+        score[0][i] = max(score[1][i-1], score[1][i-2]) + sticker[0][i]
+        score[1][i] = max(score[0][i-1], score[0][i-2]) + sticker[1][i]
+
+    return max(score[0][n - 1], score[1][n - 1])
 
 if __name__ == '__main__':
-    T = int(sys.stdin.readline())
+    T = int(read())
     for _ in range(T):
-        n = int(sys.stdin.readline())
-        nums = map(int, sys.stdin.readline().split())
+        n = int(read())
+        sticker = [list(map(int, read().split())) for _ in range(2)]
 
-        sys.stdout.write('%d\n'%solution(n, nums, -1))
+        sys.stdout.write('%d\n'%solution(n, sticker))

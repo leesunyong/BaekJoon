@@ -1,55 +1,37 @@
 import sys
 
+import heapq
+
 def solution(k, command):
-    doublePriorityQueue = ['' for _ in range(1000000)]
-    length = 0
-
-    for c, num in command:
-        if c == 'I':
-            # Insert Method
-            length += 1
-            current = num; idx = length
-            doublePriorityQueue[idx] = current
-            while idx > 1 and\
-                (doublePriorityQueue[idx] > doublePriorityQueue[idx // 2] or doublePriorityQueue[idx] > doublePriorityQueue[idx // 2 + 1]):
-                if doublePriorityQueue[idx // 2] > doublePriorityQueue[idx // 2 + 1]:
-                    doublePriorityQueue[idx], doublePriorityQueue[idx // 2 + 1]\
-                        = doublePriorityQueue[idx // 2 + 1], doublePriorityQueue[idx]
-                else :
-                    doublePriorityQueue[idx], doublePriorityQueue[idx // 2]\
-                        = doublePriorityQueue[idx // 2], doublePriorityQueue[idx]
-                idx //= 2
+    maxHeapQ, minHeapQ = [], []
+    deleted = [True for _ in range(1_000_001)]
+    for i, c in enumerate(command):
+        if c[0] == 'I':
+            # Insert number
+            heapq.heappush(maxHeapQ, (-c[1], i))
+            heapq.heappush(minHeapQ, (c[1], i))
             
+            deleted[i] = False
+
         else :
-            if length > 0:
-                length -= 1
-
-                if num == 1:
-                    # Delete Maximum Value
-                    doublePriorityQueue[1], doublePriorityQueue[length + 1] = doublePriorityQueue[length + 1], ''
-                    idx = 1
-                    while idx < length and\
-                        (doublePriorityQueue[idx] < doublePriorityQueue[idx * 2] or doublePriorityQueue[idx] < doublePriorityQueue[idx * 2 + 1]):
-                        if doublePriorityQueue[idx * 2] > doublePriorityQueue[idx * 2 + 1]:
-                            doublePriorityQueue[idx], doublePriorityQueue[idx * 2]\
-                                = doublePriorityQueue[idx * 2], doublePriorityQueue[idx]
-                            idx = idx * 2
-                        else :
-                            doublePriorityQueue[idx], doublePriorityQueue[idx * 2 + 1]\
-                                = doublePriorityQueue[idx * 2 + 1], doublePriorityQueue[idx]
-                            idx = idx * 2 + 1
-
-                else :
-                    # Delete Minimum Value
-                    doublePriorityQueue[length + 1] = ''
-        
-        print(doublePriorityQueue[1:length + 1])
-        
-    if length == 0: sys.stdout.write('EMPTY\n')
-    else : sys.stdout.write('%d %d\n'%(doublePriorityQueue[1], doublePriorityQueue[length]))
-            
-
-
+            # Delete number
+            if c[1] == 1:
+                # Delete from Max Queue
+                while maxHeapQ and deleted[maxHeapQ[0][1]]: heapq.heappop(maxHeapQ) 
+                if maxHeapQ:
+                    deleted[maxHeapQ[0][1]] = True
+                    heapq.heappop(maxHeapQ)
+            else :
+                # Delete from Min Queue
+                while minHeapQ and deleted[minHeapQ[0][1]]: heapq.heappop(minHeapQ)
+                if minHeapQ:
+                    deleted[minHeapQ[0][1]] = True
+                    heapq.heappop(minHeapQ)
+                    
+    while maxHeapQ and deleted[maxHeapQ[0][1]]: heapq.heappop(maxHeapQ)
+    while minHeapQ and deleted[minHeapQ[0][1]]: heapq.heappop(minHeapQ)
+    
+    sys.stdout.write('%s\n'%(str(-maxHeapQ[0][0]) + ' ' + str(minHeapQ[0][0]) if minHeapQ and maxHeapQ else 'EMPTY'))
 
 if __name__ == '__main__':
     T = int(sys.stdin.readline()) # test case

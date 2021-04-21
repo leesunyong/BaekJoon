@@ -1,28 +1,35 @@
 import sys
 
-def bfs(numbers, visited, current, depth):
-
-    visited[current[0]][current[1]] = True
-    depth += 1
-    value = 0
-    if current[0] > 0 and not visited[current[0] - 1][current[1]] and depth < 4:
-        tmp = bfs(numbers, visited, (current[0]-1, current[1]), depth + 1) + numbers[current[0] - 1][current[1]]
-        if tmp > value: value = tmp
-
-    return value
-
 def solution(N, M, numbers):
     maxSum = 0
+    nums = [[0 for _ in range(M + 6)] for _ in range(N + 6)]
+    for i in range(N):
+        for j in range(M):
+            nums[i + 3][j + 3] = numbers[i][j]
+
+    next = [[(0, 1), (0, 2), (0, 3)],
+            [(1, 0), (0, 1), (1, 1)],
+            [(0, 1), (1, 1), (0, 2)],
+            [(0, 1), (-1, 1), (0, 2)],
+            [(1, 0), (1, 1), (2, 1)],
+            [(1, 0), (1, -1), (2, -1)],
+            [(1, 0), (2, 0), (2, 1)],
+            [(1, 0), (2, 0), (2, -1)]]
 
     for i in range(N):
         for j in range(M):
-            value = numbers[i][j]
-            visited = [[False for _ in range(M)] for _ in range(N)]
-            tmp = bfs(numbers, visited, (i, j), 1) + value
-
-            if tmp > maxSum: 
-                print(i, j, tmp)
-                maxSum = tmp
+            for n in next:
+                tmp1 = tmp2 = tmp3 = tmp4 = numbers[i][j]
+                for b in n:
+                    tmp1 += nums[b[0] + i + 3][b[1] + j + 3]
+                    tmp2 += nums[b[1] + i + 3][b[0] + j + 3]
+                    tmp3 += nums[-b[0] + i + 3][-b[1] + j + 3]
+                    tmp4 += nums[-b[1] + i + 3][-b[0] + j + 3]
+                
+                if tmp1 > maxSum: maxSum = tmp1
+                if tmp2 > maxSum: maxSum = tmp2
+                if tmp3 > maxSum: maxSum = tmp3
+                if tmp4 > maxSum: maxSum = tmp4
 
     return maxSum
 
