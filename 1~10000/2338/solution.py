@@ -53,33 +53,34 @@ def minus(num1, num2):
         return '0'
 
 def multi(num1, num2):
+    negative = ''
     if num1[0] == '-' and num2[0] != '-':
-        return '-' + multi(num1[1:], num2)
+        negative = '-'; num1 = num1[1:]
     elif num1[0] != '-' and num2[0] == '-':
-        return '-' + multi(num1, num2[1:])
+        negative = '-'; num2 = num2[1:]
     elif num1[0] == '-' and num2[0] == '-':
-        return multi(num1[1:], num2[1:])
-    else :
-        if len(num2) > 1:
-            return add(multi(num1, num2[:-1]) + '0', multi(num1, num2[-1]))
+        num1 = num1[1:]; num2 = num2[1:]
         
-        b = int(num2)
-        carry = 0
-        answer = ""
-        for i in range(len(num1) - 1, -1, -1):
-            a = int(num1[i]) * b + carry
-            carry = a // 10
-            a %= 10
+    if len(num2) > 1:
+        return add(multi(num1, num2[:-1]) + '0', multi(num1, num2[-1]))
+    
+    b = int(num2)
+    carry = 0
+    answer = ""
+    for i in range(len(num1) - 1, -1, -1):
+        a = int(num1[i]) * b + carry
+        carry = a // 10
+        a %= 10
 
-            answer = str(a) + answer
-        
-        if carry != 0: answer = str(carry) + answer
+        answer = str(a) + answer
+    
+    if carry != 0: answer = str(carry) + answer
 
-        for i in range(len(answer)):
-            if answer[i] != '0':
-                return answer[i:]
-        
-        return '0'
+    for i in range(len(answer)):
+        if answer[i] != '0':
+            return negative + answer[i:]
+    
+    return '0'
 
 
 def solution(A, B):
