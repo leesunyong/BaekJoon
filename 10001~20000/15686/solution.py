@@ -1,28 +1,27 @@
 import sys
+from itertools import combinations
 
-def dp(dis, i, M):
-    if M == len(dis[0]) - i:
-        return sum(map(min, dis))
-    else :
-        
+input = sys.stdin.readline
 
-def solution(N, M, city):
-    house = []; chicken = []
-    for i, c in enumerate(city):
-        for j, s in enumerate(c):
-            if s == 1: house.append((i, j))
-            elif s == 2: chicken.append((i, j))
+def solution(M, house, chicken):
+    cDis = [[abs(h[0] - c[0]) + abs(h[1] - c[1]) for c in chicken] for h in house]
     
-    dis = [[0] * len(chicken) for _ in range(len(house))]
+    cityDis = 2500
+    for i in combinations((j for j in range(len(chicken))), M):
+        dis = 0
+        for k in range(len(cDis)):
+            dis += min([cDis[k][c] for c in i])
+        cityDis = min(cityDis, dis)
 
-    for i, h in enumerate(house):
-        for j, c in enumerate(chicken):
-            dis[i][j] = abs(h[0] - c[0]) + abs(h[1] - c[1])
-
-    dp(dis, 0, M)
+    return cityDis
 
 if __name__ == '__main__':
-    N, M = map(int, sys.stdin.readline().split())
+    N, M = map(int, input().split())
 
-    city = [list(map(int, sys.stdin.readline().split())) for _ in range(N)]
-    solution(N, M, city)
+    city = []; house = []; chicken = []
+    for i in range(N):
+        city.append(input().split())
+        for j in range(N):
+            if city[i][j] == '1': house.append((i, j))
+            elif city[i][j] == '2': chicken.append((i, j))
+    print(solution(M, house, chicken))
